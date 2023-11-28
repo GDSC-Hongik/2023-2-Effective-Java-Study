@@ -78,13 +78,13 @@ public class DiscountsGenerator {
     public static Discounts generate(final Visit visit) {
         List<Discount> discounts = new ArrayList<>();
         if (visit.getOrder().getTotalOrderAmount() < DISCOUNT_THRESHOLD) {
-            return Discounts.of(discounts);
+            return Discounts.from(discounts);
         }
         discounts.add(Discount.generateChristmasDiscount(visit.getDate()));
         discounts.add(Discount.generateWeekdayDiscount(visit.getDate(), visit.getOrder()));
         discounts.add(Discount.generateWeekendDiscount(visit.getDate(), visit.getOrder()));
         discounts.add(Discount.generateSpecialDiscount(visit.getDate()));
-        return Discounts.of(discounts);
+        return Discounts.from(discounts);
     }
 }
 ```
