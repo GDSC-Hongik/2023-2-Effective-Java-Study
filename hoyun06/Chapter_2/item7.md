@@ -194,10 +194,10 @@ car = weakCar.get(); // null 반환
 public class WeakHashMap<K,V> extends AbstractMap<K,V> implements Map<K,V> {
     // 생략
 
-    /**
-     * The table, resized as necessary. Length MUST Always be a power of two.
-     */
     Entry<K, V>[] table;
+    
+   // Reference queue for cleared WeakEntries
+   private final ReferenceQueue<Object> queue = new ReferenceQueue<>();
 }
 ```
 ```java
@@ -262,10 +262,12 @@ public static void main(String[] args) throws InterruptedException {
 }
 ```
 **출력 결과**
-```markdown
+```java
+// GC 호출 전(인스턴스 수거 전)
 weakPizza.get: hoyun06.Chapter_2.NyPizza@682a0b20
 poll: null
 
+// GC 호출 후(인스턴스 수거 후)
 weakPizza.get: null
 poll: java.lang.ref.WeakReference@214c265e
 ```
