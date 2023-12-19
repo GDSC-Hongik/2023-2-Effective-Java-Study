@@ -228,7 +228,10 @@ private static class Entry<K, V> extends WeakReference<Object> implements Map.En
 ###### ReferenceQueue
 이름에서 알 수 있듯이 주로 Reference(soft, weak) 객체들이 담기는 자료구조라고 생각하면 된다.  
 하지만 Reference 객체라고 해서 무조건 ReferenceQueue에 담기는 것은 아니다.  
-우선 아래 코드를 보면 이해하기 편하다.
+
+**결과적으로 말하면 WeakReference 객체가 내부적으로 참조하던 객체가 GC에 의해 수거되면
+해당 내부 참조를 null로 만들면서 WeakReference 객체 자체는 자신과 연결된 ReferenceQueue에 enqueue 된다.**
+
 ```java
 public static void main(String[] args) throws InterruptedException {
     NyPizza nyPizza = new NyPizza(5);
@@ -271,10 +274,6 @@ poll: null
 weakPizza.get: null
 poll: java.lang.ref.WeakReference@214c265e
 ```
-살짝 서론이 길어진 것 같다.  
-
-**결과적으로 말하면 WeakReference 객체가 내부적으로 참조하던 객체가 GC에 의해 수거되면 
-해당 내부 참조를 null로 만들고 WeakReference 객체 자체는 자신과 연결된 ReferenceQueue에 enqueue 된다.**
 
 ###### WeakHashMap에서 entry가 자동으로 제거되는 원리
 우선 WeakHashMap 클래스의 put 메서드를 보자
