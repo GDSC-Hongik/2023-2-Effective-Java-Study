@@ -31,10 +31,11 @@ clone 메서드를 사용하기 위해선...
 ```java
 @Override
 public PhoneNumber clone() {
-  try {
-    return (PhoneNumber) super.clone();
-  } catch (CloneNotSupportedException e) {
-    throw new AssertionError(); // 일어날 수 없는 일이다.
+	try {
+	    return(PhoneNumber)super.clone();
+	} catch(CloneNotSupportedException e) {
+	    throw new AssertionError(); // 일어날 수 없는 일이다.
+	}
 }
 ```
 자바는 기본적으로 `공변 반환 타입`을 지원하므로 이와 같이 PhoneNumber 클래스로 캐스팅하여 반환해도 된다.
@@ -121,11 +122,6 @@ public class HashTable implements Cloneable {
 ```java
 public class HashTable implements Cloneable{
     private Entry[] buckets;
-    
-    private static class Entry {
-    final Object key;
-    Object value;
-    Entry next;
     
     private static class Entry {
         Object key, value;
