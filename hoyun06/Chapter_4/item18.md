@@ -101,3 +101,184 @@ public class ColorCar {
     상속은 상위/하위 클래스의 관계가 is-a 관계일 때만 사용하자. 하지만 이 경우에도 두 클래스의 패키지가 다르다거나 
     상위 클래스가 확장 가능성을 제대로 고려하지 않고 설계되었다면 문제가 생길 수 있다. 그렇기에 꼭 상속이 필요한 경우가 아니라면
     컴포지션을 사용하자
+
+
+###### 데코레이터 패턴 사용하지 않는 상황
+피자 관련 코드들을 작성한다고 생각해보자.  
+초기에는 클라이언트가 불고기 피자, 치즈 피자, 페퍼로니 피자만 요구했기에 이 3개의 클래스만 작성하여 사용했다.
+```java
+public abstract class Pizza {
+        
+    void printName() {
+        System.out.println("토마토 소스가 담긴 피자입니다.");
+    }
+}
+public class BulgogiPizza implements Pizza {
+    @Override
+    public void printName() {
+        System.out.print("불고기, ");
+        super.printName();
+    }
+}
+public class CheesePizza implements Pizza {
+    @Override
+    public void printName() {
+        System.out.print("치즈, ");
+        super.printName();
+    }
+}
+public class PepperoniPizza implements Pizza {
+    @Override
+    public void printName() {
+        System.out.print("페퍼로니, ");
+        super.printName();
+    }
+}
+```
+하지만 시간이 흐르고 클라이언트의 요구 사항이 늘어나서 새로운 피자 종류들을 요구하며
+기존 피자들 중에서도 재료를 섞은 피자를 요구한다고 하자.(ex. 페퍼로니 치즈 피자, 불고기 치즈 피자...)
+
+위 경우에는 새로운 종류의 피자에 대해선 당연히 새로운 클래스를 작성해야 한다. 심지어 기존 재료들을 그저 같이 토핑한 피자에 대해서도
+새로운 클래스를 생성해서 사용해야 한다.(ex. PepperoniCheesePizza, BulgogiCheesePizza).
+
+여기서 유용하게 사용할 수 있는 것이 `데코레이터 패턴`이다.
+
+###### 데코레이터 패턴
+> 주어진 상황에 따라 특정 객체에 기능을 덧붙이는 패턴으로, 기능 확장이 필요할 때 상속을 대신할 수 있는 유연한 대안이 될 수 있다.
+
+쉽게 말해 원본 객체에 기능들을 덧붙이는 패턴이다. 이 패턴에서는 컴포지션을 이용하여 로직의 실행을 위임한다.
+
+###### 데코레이터 패턴 구조
+
+<img src="https://cdn.stackoverflow.co/images/jo7n4k8s/production/9edc178caf76a8166ed915e808b8865f4ab6f226-1024x709.png?auto=format"/>
+출처: https://stackoverflow.blog/2021/10/13/why-solve-a-problem-twice-design-patterns-let-you-apply-existing-solutions-to-your-code/
+
+- **Component** : 원본 객체와 Decorator 객체들을 하나의 타입으로 묶어주는 역할을 한다. interface를 사용하여 원본 객체 및 Decorator 객체들이 구현해야 할 기능에 대해 정의한다.
+- **ConcreteComponent** : 원본 객체를 나타낸다. 데코레이팅의 대상이 되는 객체.
+- **Decorator** : 추가할 기능들을 나타내는 Decorator 클래스를 추상화 해놓은 객체. abstract 클래스로 보통 선언하며 원본 객체를 컴포지션 형태로 참조한다.
+- **ConcreteDecorator** : 실제 추가할 기능들을 각각 담당하는 구체 Decorator 클래스들.
+
+**데코레이터 패턴을 실제 코드로 살펴보려고 한다.**
+
+###### Component
+```java
+public interface Pizza {
+    void printName();
+}
+```
+원본 객체와 구체 Decorator 객체들이 구현해야 할 기능을 정의하는 역할을 한다. 여기선 각 Pizza에 들어간 재료를 출력하는 메서드를 구현해야 한다.
+
+###### ConcreteComponent
+```java
+public class DefaultPizza implements Pizza {
+    @Override
+    public void printName() {
+        System.out.println("토마토 소스가 담긴 피자입니다.");
+    }
+}
+```
+Pizza 인터페이스를 구현한다. 데코레이팅을 받을 원본 객체를 나타내는 클래스다. 여기선 아무 토핑이 올라가지 않은 토마토 소스만 바른 피자가 원본이다.  
+이제 이 원본 객체에 하나씩 데코레이팅을 할 수 있다.
+
+###### Decorator
+```java
+public abstract class PizzaDecorator implements Pizza {
+
+    // 컴포지션
+    private Pizza pizza;
+    
+    public PizzaDecorator(Pizza pizza) {
+        this.pizza = pizza;
+    }
+    
+    @Override
+    public void printName() {
+        pizza.printName();
+    }
+}
+```
+Decorator 클래스는 인스턴스화를 하는 것이 목적이 아니므로 추상 클래스로 선언한다. 데코레이팅을 적용할 원본 객체 혹은 
+이미 데코레이팅이 적용된 원본 객체에 또다른 데코레이팅을 적용할 수 있도록 설계하는 것이 목표이다. 그래서   
+원본 객체와 Decorator 클래스들을 모두 아우르는 **Pizza 인터페이스 타입**을 컴포지션 형식으로 참조한다.  
+printName 메서드 내부 구현을 봐도 자신이 내부적으로 참조하고 있는 원본 객체에게 로직 실행을 위임하는 것을 알 수 있다.
+
+###### ConcreteDecorator
+```java
+public class PepperoniDecorator extends PizzaDecorator {
+    public PepperoniDecorator(Pizza pizza) {
+        super(pizza);
+    }
+    
+    @Override
+    public void printName() {
+        System.out.print("페퍼로니, ");
+        super.printName();
+    }
+}
+```
+```java
+public class MushroomDecorator extends PizzaDecorator {
+    public MushroomDecorator(Pizza pizza) {
+        super(pizza);
+    }
+    
+    @Override
+    public void printName() {
+        System.out.print("버섯, ");
+        super.printName();
+    }
+}
+```
+데코레이팅을 적용할 원본 객체는 super() 를 통해 참조를 유지하고 printName 메서드에서는 각 Decorator 클래스들이 제공하고자 하는 데코레이팅 기능을 
+구현한다. 
+
+실제 클라이언트 코드는 다음과 같을 수 있다.
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        boolean pepperoniEnabled = true;
+        boolean mushroomEnabled = true;
+    
+        Pizza pizza = new DefaultPizza();
+        pizza.printName();
+    
+        if (pepperoniEnabled) {
+            pizza = new PepperoniDecorator(pizza);
+        }
+        if (mushroomEnabled) {
+            pizza = new MushroomDecorator(pizza);
+        }
+    
+        pizza.printName();
+    }
+}
+```
+출력 결과
+```java
+토마토 소스가 담긴 피자입니다.
+버섯, 페퍼로니, 토마토 소스가 담긴 피자입니다.
+```
+위 코드와 같이 런타임에 원본 객체에 필요한 기능을 추가할 수 있다.  
+DeafaultPizza의 생성자를 통해 원본 객체를 생성하고 그 뒤에 필요한 토핑을 데코레이팅 한다.  
+물론 이 경우에도 새로운 피자 종류가 필요하면 새로운 Decorator 클래스를 작성할 수밖에 없다.  
+하지만 기존 재료들을 활용한 피자를 만들고자 한다면 Decorator를 다중 적용하여 생성이 가능하다.
+```java
+public class Main {
+    
+    public static void main(String[] args) {
+        Pizza pizza = new PepperoniDecorator(new MushroomDecorator(new DefaultPizza()));
+    }
+}
+```
+
+###### 데코레이터 패턴 장/단점
+**장점**
+- 확장이 필요한 경우에 서브 클래스를 만들지 않고도 기존 Decorator 클래스를 재활용할 수 있다.
+- 컴파일 타임이 아닌 런타임에 동적으로 기능을 변경할 수 있다.
+- 각 Decorator 클래스마다 자신의 데코레이팅 기능만 맡으므로 SRP를 준수한다.
+
+**단점**
+- 데코레이팅을 적용한 뒤에 나중에 그 데코레이팅된 기능을 제거하는 것이 까다롭다.
+- 여러 Decorator가 적용된 인스턴스 생성 시 생성자가 중복되어 작성되므로 가독성이 떨어진다.
+- 데코레이팅을 적용하는 순서에 따라 로직 실행 순서가 바뀔 수 있다.
