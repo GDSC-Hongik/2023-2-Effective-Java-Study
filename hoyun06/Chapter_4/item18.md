@@ -113,21 +113,21 @@ public abstract class Pizza {
         System.out.println("토마토 소스가 담긴 피자입니다.");
     }
 }
-public class BulgogiPizza implements Pizza {
+public class BulgogiPizza extends Pizza {
     @Override
     public void printName() {
         System.out.print("불고기, ");
         super.printName();
     }
 }
-public class CheesePizza implements Pizza {
+public class CheesePizza extends Pizza {
     @Override
     public void printName() {
         System.out.print("치즈, ");
         super.printName();
     }
 }
-public class PepperoniPizza implements Pizza {
+public class PepperoniPizza extends Pizza {
     @Override
     public void printName() {
         System.out.print("페퍼로니, ");
@@ -256,7 +256,10 @@ public class Main {
 ```
 출력 결과
 ```java
+// 원본 피자 객체
 토마토 소스가 담긴 피자입니다.
+
+// 데코레이터에 의해 기능이 추가된 피자 객체
 버섯, 페퍼로니, 토마토 소스가 담긴 피자입니다.
 ```
 위 코드와 같이 런타임에 원본 객체에 필요한 기능을 추가할 수 있다.  
