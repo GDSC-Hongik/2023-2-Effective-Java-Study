@@ -1,7 +1,7 @@
 # [record](https://docs.oracle.com/en/java/javase/17/language/records.html)
 
 record는 자바에서 제공하는 클래스의 종류이다.  
-간단하게 데이터를 저장하고 전달하기 위한 목적으로 사용 가능ㅎ다.  
+간단하게 데이터를 저장하고 전달하기 위한 목적으로 사용 가능하다.  
 ```java
 public record Rectangle(Integer width, Integer height) {
 }
