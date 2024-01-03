@@ -80,3 +80,103 @@ if (o instanceof Set) {
     로 타입은 안전하지 않다. 로 타입의 목적은 비제네릭 코드와의 호환성을 제공하기 위함이다.
     어떠한 원소라도 담고싶은 컬렉션을 사용하고 싶다면 Object를 실제 타입 매개변수로 가지는 제네릭을 선언하자.
     제네릭을 사용하면서 실제 타입에 대해선 신경쓰고 싶지 않다면 ?를 사용한 비한정적 와일드카드를 사용하자.
+
+
+### 와일드 카드
+###### 와일드 카드의 필요성
+자바의 객체 및 배열은 상하관계가 존재한다. 그리고 이에 대해 공변성을 제공한다.
+```java
+class Car {
+    Car() {}
+}
+class RaceCar extends Car {
+    RaceCar() {
+        super();
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Car car = new RaceCar();
+		
+        Object[] objects = new Integer[10];
+    }
+}
+```
+상위 클래스인 Car 참조 변수로 하위 클래스인 RacingCar를 가리킬 수 있으며 상위 클래스인 Object 배열로 Integer 배열을 가리킬 수 있다.
+
+하지만 제네릭 클래스의 경우 상하관계가 성립하지 않고 그에 따라 공변성도 제공하지 않는다.
+```java
+ArrayList<Car> cars = new ArrayList<>();                
+ArrayList<RaceCar> raceCars = new ArrayList<>();        
+cars = raceCars; // 컴파일 에러
+
+ArrayList<Object> objects = new ArrayList<String>(); // 컴파일 에러
+```
+그래서 제네릭한 코드에서도 공변성을 제공하는 수단으로 사용할 수 있는 것이 `와일드카드`다.
+
+###### 비한정적 와일드카드
+```java
+List<?> unknownList = ...;
+```
+아무런 경계를 설정하지 않은 와일드카드. 와일드카드를 이용함으로써 어떤 타입 매개변수에 대해서도 가리킬 수 있게 된다.
+여기서 '?'를 `any type`보다는 아직 정해지지 않았다는 의미인 `unknown type`이라고 생각하자. '**아직 정해지지 않았기에
+가리키는 것에 있어서 제약이 없다**'정도로 이해하면 될 것 같다.
+
+###### 한정적 와일드카드
+특정 타입을 기준으로 상한 및 하한 범위를 지정함으로써 말그대로 boundary를 설정할 수 있는 와일드카드다.  
+
+**상한 경계 와일드카드**
+- 와일드카드 타입에 extends를 사용해서 상한 경계를 설정한다.
+  ```java
+  public void print(Collection<? extends Car> c) {
+      for (RaceCar r : c) {   // 컴파일 에러
+          ...
+      }
+      for (Car r : c) {       // 컴파일 성공
+          ...
+      }
+      for (Object o : c) {   // 컴파일 성공
+          ...
+      }
+  }
+  ```
+  맨 첫 번째 for-each 문은 컴파일 에러가 발생한다. Collection에는 Car 및 Car의 하위 클래스가 들어갈 수 있는 것은 맞다. 
+  하지만 안에 있는 원소가 항상 RaceCar 타입이라는 보장은 없다. 막말로 Car를 상속하는 또 다른 하위 클래스인 FlyingCar 타입일 수도 있는 것이다.
+  ```java
+  public void add(Collection<? extends Car> c) {
+      c.add(new RaceCar());        // 컴파일 에러
+      c.add(new Car());            // 컴파일 에러
+      c.add(new Object());         // 컴파일 에러
+  }
+  ```
+  c의 경우 Car와 Car를 상속하는 모든 하위 클래스 타입만 들어갈 수 있다고 경계를 설정한 것이지 실제로 들어있는 원소타입이 정해진 것이 아니다. 그래서 
+  첫 번째와 두 번째 add 메서드 모두 컴파일 에러를 발생시킨다. 세 번째 add같은 경우 Object 타입을 넣으려고 하지만 애초에 Object는
+  `extends Car` 를 만족하지 못한다.
+
+**하한 경계 와일드카드**
+- 와일드카드 타입에 super를 사용해서 하한 경계를 설정한다.
+  ```java
+  public void add(Collection<? super Car> c) {
+      c.add(new RaceCar());        // 컴파일 성공
+      c.add(new Car());            // 컴파일 성공
+      c.add(new Object());         // 컴파일 에러
+  }
+  ```
+  첫 번째와 두 번째 add메서드는 정상적으로 컴파일된다. c는 Car와 Car의 부모 타입이라면 담을 수 있는 컬렉션이므로 안에 들어가는 원소는
+  최소한 Car 타입임은 보장되기 때문이다. 반면 세 번째 add는 에러가 발생한다. Car의 부모 타입이라고 해서 항상 Object 타입이라는
+  보장이 없기 때문이다. 막말로 c에 Car의 부모 타입인 Vehicle이라는 원소들이 담겨있을 수도 있는데 이때는 Object를 넣을 수 없다.
+  ```java
+  public void print(Collection<? super Car> c) {
+      for (RaceCar r : c) {   // 컴파일 에러
+          ...
+      }
+      for (Car r : c) {       // 컴파일 에러
+          ...
+      }
+      for (Object o : c) {   // 컴파일 성공
+          ...
+      }
+  }
+  ```
+  첫 번째, 두 번째 for-each문은 당연히 안된다. c에는 Car와 그 부모 타입만 들어갈 수 있다. 그걸 하위 타입인 Car 혹은 RaceCar로 캐스팅하는 것은 불가능하다.
+  세 번째 for-each만 정상적으로 컴파일된다. 자바에서 Object는 모든 클래스의 부모 클래스이기 때문이다.
