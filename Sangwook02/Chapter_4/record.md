@@ -1,7 +1,7 @@
 # [record](https://docs.oracle.com/en/java/javase/17/language/records.html)
 
 record는 자바에서 제공하는 클래스의 종류이다.  
-간단하게 데이터를 저장하고 전달하기 위한 목적으로 사용 가능ㅎ다.  
+간단하게 데이터를 저장하고 전달하기 위한 목적으로 사용 가능하다.  
 ```java
 public record Rectangle(Integer width, Integer height) {
 }
@@ -26,8 +26,8 @@ public record Rectangle(Integer width, Integer height) {
 }
 ```
 
-- 모든 클래스가 final이다.  
-final이기 때문에 값을 변경할 수 없다.  
+- 클래스가 final이다.  
+클래스가 final이기 때문에 모든 필드가 final이고 값을 변경할 수 없다.  
 - 모든 필드의 값을 반환하는 toString이 자동으로 생긴다.
 - equals와 hashcode도 자동으로 생성된다.
 - getter의 이름은 필드의 이름이다.
