@@ -114,7 +114,7 @@ Class clazz = car.getClass();
 ```java
 Class clazz = Class.forName("hoyun06.Car")
 ```
-forName 메서드를 이용해서 Class 객체를 얻을 때는 패키지를 포함하나 클래스명을 직접 명시해야 한다.
+forName 메서드를 이용해서 Class 객체를 얻을 때는 패키지를 포함한 클래스명을 직접 명시해야 한다.
 
 ###### Class 객체를 사용하여 할 수 있는 것들
 위 방법을 통해서 특정 클래스에 대한 Class 객체를 얻었다면 할 수 있는 작업이 꽤나 많다.
