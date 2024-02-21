@@ -18,3 +18,37 @@ public String statement2() {
 ```
 
 - statement2의 수행 시간 → **선형**으로 증가 !
+
+## 사용할 수 있는 방법들
+
+### StringBuilder / StringBuffer
+
+- `StringBuffer` : 멀티스레드로 동시에 `StringBuilder`에 여러 스레드에서 접근해야 하는 경우
+
+### Stream
+
+```java
+Arrays.stream(arr).collect(Collectors.joining());
+```
+
+- `joining`도 내부적으로 `StringBuilder` 사용
+
+### StringJoiner
+
+```java
+new StringJoiner(",", "[", "]");
+```
+
+- `delimiter`, `prefix`, `suffix`를 붙여서 join 가능
+
+### String.join
+
+```java
+String.join("", arr);
+```
+
+- 내부적으로 `StringJoiner` 사용
+
+## 참고자료
+
+[자바에서 문자열 합칠 때 '+' 연산을 쓰지 마세요! (StringBuilder, StringJoiner, String.join, StringBuffer)](https://nahwasa.com/entry/자바에서-String에-대한-연산을-쓰지-마세요-StringBuilder-StringBuffer)
