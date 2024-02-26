@@ -32,9 +32,10 @@ Java Application에서 Process를 실행하고 모니터링할 수 있으며 해
 - **ProcessBuilder**
   - Java Application 내부에서 실제 Process 생성을 담당. Process 생성 과정에서 설정할 수 있는 속성들을 관리하는 클래스.
 - **Process**
-  - 이름 그대로 실행 중인 Process를 나타내는 클래스. java Process api를 통해 실행된 프로세스는 자신만의 console 혹은 터미널을 가지지 못하므로
-  해당 프로세스의 standard I/O 는 자신을 실행한 부모 프로세스로 리디렉트 된다(여기선 자바 프로그램). 이때 해당 프로세스의 I/O 에 접근할 수 있는 기능을 제공하는 것이
-  Process 클래스다
+  - 이름 그대로 실행 중인 Process를 나타내는 클래스. java Process api를 통해 실행된 프로세스의 I/O 에 접근할 수 있는 기능을 제공하는 것이
+  Process 클래스다.
+  - getOutputStream() : 생성된 프로세스에 입력을 넣을 수 있는 OutputStream 가져온다. 이 OutputStream은 해당 프로세스의 input과 연결되어 있다.
+  - getInputStream() : 생성된 프로세스의 출력을 읽어올 수 있는 InputStream 가져온다. 이 InputStream은 해당 프로세스의 output과 연결되어 있다.
 - **ProcessHandle**
   - 실행 중인 Process 혹은 이미 종료된 Process 에 대한 정보를 제공하는 인터페이스. 프로세스 id, 프로세스 동작 여부, 해당 프로세스의 자식/부모 프로세스 같은 정보를 제공하고
   실제 Process를 종료시키는 동작도 수행 가능하다.
