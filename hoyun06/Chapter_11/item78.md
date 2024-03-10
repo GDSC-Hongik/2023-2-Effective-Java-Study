@@ -135,4 +135,7 @@ public class Test {
    - `synchronized` 블록이 (정상적이든 비정상적이든)종료되면 '모니터'에 대한 unlock 작업 수행 
 5. 만약 lock 작업에 실패했다면 성공할 때까지 메서드 실행을 중지했다가 lock 작업을 수행한 뒤에 메서드 마저 실행 
 
-참고: https://happy-coding-day.tistory.com/entry/JAVA-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%9E%80-%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80
+참고
+- https://happy-coding-day.tistory.com/entry/JAVA-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%9E%80-%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80
+- https://docs.oracle.com/javase/specs/jls/se8/html/jls-17.html#jls-17.1
+- https://www.artima.com/insidejvm/ed2/threadsynch.html
